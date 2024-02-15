@@ -312,4 +312,4 @@ if any(platform.win32_ver()):
     ssl_context.load_cert_chain(certfile='cert.pem',
                                 keyfile='key.pem')
 
-    socketio.run(app, host="0.0.0.0", debug=True, ssl_context=ssl_context)
+    socketio.run(app, host="0.0.0.0", debug=True, )
