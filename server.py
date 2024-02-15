@@ -310,6 +310,10 @@ def mute_user(data):
 # ssl_context = ssl.create_default_context(purpose=ssl.Purpose.CLIENT_AUTH)
 # ssl_context.load_cert_chain(certfile="cert.pem", keyfile="key.pem")
 
-socketio.run(app, host="0.0.0.0", debug=True, 
-             #ssl_context=ssl_context
-             )
+socketio.run(
+    app,
+    host="0.0.0.0",
+    debug=True,
+    allow_unsafe_werkzeug=True,
+    # ssl_context=ssl_context
+)
