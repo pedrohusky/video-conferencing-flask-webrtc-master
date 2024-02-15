@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Room</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .card {
+            border-radius: 20px;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2 class="text-center mb-4">Join Room</h2>
+        <form action="/join" method="GET">
+            {% if error_message %}
+            <div class="alert alert-danger" role="alert">
+                {{ error_message }}
+            </div>
+            {% endif %}
+            <div class="mb-3">
+                <label for="display_name" class="form-label">Your Name</label>
+                <input type="text" class="form-control" id="display_name" name="display_name" required value="{{display_name}}">
+            </div>
+            <div class="mb-3">
+                <label for="display_name" class="form-label">Room ID</label>
+                <input type="number" class="form-control" id="room_id" name="room_id" required value="{{room_id}}">
+            </div>
+            <div class="mb-3">
+                <label for="mute_audio" class="form-label">Mute Audio</label>
+                <select class="form-select" id="mute_audio" name="mute_audio" required value="{{mute_audio}}">
+                    <option value="0" {% if mute_audio == '0' %} selected {% endif %}>No</option>
+                    <option value="1" {% if mute_audio == '1' %} selected {% endif %}>Yes</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="mute_video" class="form-label">Mute Video</label>
+                <select class="form-select" id="mute_video" name="mute_video" required>
+                    <option value="0" {% if mute_video == '0' %} selected {% endif %}>No</option>
+                    <option value="1" {% if mute_video == '1' %} selected {% endif %}>Yes</option>
+                </select>
+
+            </div>
+            <button type="submit" class="btn btn-primary">Join</button>
+        </form>
+    </div>
+</body>
+</html>

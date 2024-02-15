@@ -1,0 +1,304 @@
+html,
+body {
+  margin: 0;
+  height: 100%;
+  width: 100%; /* Initial size, can adjust as needed */
+  overflow: hidden;
+  background-color: #333; /* Darker background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+#local_vid {
+  height: 240px;
+  width: 150px;
+  object-fit: cover;
+  z-index: 100;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+}
+
+.video-grid {
+  width: 75%;
+  height: 90%;
+  margin-bottom: 65px;
+  background-color: #4a4a4a; /* Darker background */
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.5s ease, transform 0.5s ease, resize 0.5s ease;
+}
+
+.video {
+  width: 100%;
+  max-width: 300px;
+  max-height: 300px;
+  height: 100%;
+  object-fit: cover; /* Maintain aspect ratio */
+  transition: transform 0.3s ease, opacity 0.3s ease; /* Transition transform and opacity */
+}
+
+.animvideo {
+  /* Use transition for smooth animation */
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+
+/* Define animation for fade-in and zoom-in */
+@keyframes fadeInZoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.fade-in-zoom-in {
+  /* Apply the fade-in and zoom-in animation */
+  animation: fadeInZoomIn 0.5s ease;
+}
+
+.fade-in-zoom-in-delayed {
+    opacity: 0;
+  /* Apply the fade-in and zoom-in animation */
+  animation: fadeInZoomIn 0.5s ease 350ms forwards;
+}
+
+
+/* Define animation for fade-out and zoom-out */
+@keyframes fadeOutZoomOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+}
+
+.fade-out-zoom-out {
+  /* Apply the fade-out and zoom-out animation */
+  animation: fadeOutZoomOut 0.5s ease;
+}
+
+
+
+.mini-video {
+  width: 90%;
+  height: 100%;
+  object-fit: cover; /* Maintain aspect ratio */
+  transition: transform 0.3s ease, opacity 0.3s ease; /* Transition transform and opacity */
+}
+
+
+
+#chat_box {
+    margin: 10px;
+    top: 0;
+    right:0;
+    position: sticky;
+    opacity: 0;
+    width: 0px;
+    height: 100%;
+    background-color: #1d1d1d;
+    border-radius: 8px;
+    transition: width 0.3s ease; /* Transition width property */
+}
+.button-container {
+    border-radius: 20px; /* Rounded card */
+    background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent background */
+    padding: 10px; /* Padding around buttons */
+}
+
+.bottom-buttons {
+    display: flex;
+    align-items: center; /* Align items vertically */
+}
+
+.bottom-buttons button {
+    border-radius: 10px; /* Rounded card */
+    display: flex;
+    align-items: center; /* Align icon and text vertically */
+    justify-content: center; /* Center icon and text horizontally */
+    border: none;
+    background: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 10px; /* Increased padding for better click area */
+    margin: 5px;
+    margin-bottom: 0px;
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Add transition for hover effect */
+}
+
+.bottom-buttons button:hover {
+    background-color: rgba(255, 255, 255, 0.2); /* Lighter background color on hover */
+    transform: scale(1.3); /* Increase size on hover */
+}
+
+
+/* Adjust icon size */
+.bottom-buttons button i {
+    font-size: inherit;
+}
+
+.user-info-box {
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    border-radius: 10px;
+    padding: 5px;
+    margin: 5px;
+    text-align: center;
+}
+
+.user-buttons-box {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    border-radius: 10px;
+    padding: 5px;
+    margin: 5px;
+    text-align: center;
+}
+
+
+.placeholder-container {
+    margin: 10px;
+    text-align: center;
+    top: 0;
+    left:0;
+    position: sticky;
+    opacity: 0;
+    width: 0px;
+    height: 100%;
+    background-color: #1d1d1d;
+    border-radius: 8px;
+    transition: width 0.3s ease; /* Transition width property */
+}
+
+.placeholder-text {
+    font-weight: bold;
+    font-size: 24px;
+    color: #999;
+}
+
+.people-users {
+    border-radius: 8px;
+    transition: width 0.3s ease; /* Transition width property */
+    display: flex; /* Use flexbox */
+    flex-direction: column;
+    justify-content: center; /* Center items horizontally */
+    align-items: center; /* Center items vertically */
+}
+
+/* Style for chat messages */
+.chat-message {
+  background-color: rgba(255, 255, 255, 0.2); /* Lighter background color */
+  color: white; /* White text color */
+  padding: 10px; /* Padding around the text */
+  margin: 10px; /* Margin to separate chat messages */
+  border-radius: 8px; /* Rounded corners */
+  text-align: left; /* Center align text */
+   word-wrap: break-word; /* Break long words and wrap text */
+}
+
+.person-card {
+  background-color: #333; /* Dark background color */
+  color: white; /* Text color */
+  border-radius: 8px; /* Rounded corners */
+  padding-top: 5px; /* Padding */
+  margin: 10px; /* Margin between cards */
+}
+
+.person-card p {
+  margin: 0; /* Remove default margin for paragraphs */
+}
+
+.wrapper {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 100px;
+  gap: 10px;
+}
+.wrapper div:nth-child(2) {
+  grid-column: 3;
+  grid-row: 2 / 4;
+}
+.wrapper div:nth-child(5) {
+  grid-column: 1 / 3;
+  grid-row: 1 / 3;
+}
+
+.chat-input-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: calc(100% - 10px); /* Adjusted width to accommodate margins */
+}
+
+.chat-input {
+    flex: 1;
+    padding: 8px;
+    margin-right: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: rgb(39, 39, 39);
+    color: #fff;
+}
+
+.chat-send-button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.chat-send-button:hover {
+    background-color: #45a049;
+}
+
+.rounded-card {
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 10px;
+    margin: 5px;
+}
+
+.message-sender {
+  font-family: Arial, sans-serif; /* Specify the font for the sender's name */
+  color: rgba(255, 255, 255, 0.5); /* Set a more subtle color (semi-transparent white) */
+  font-size: 1em; /* Adjust the font size as needed */
+  font-weight: bold; /* Optionally, make the sender's name bold */
+  margin-right: 5px; /* Optionally, add some spacing between the sender's name and the message */
+}
+
+/* Apply blur effect to background elements when SweetAlert is shown */
+body.swal2-shown > *:not(.swal2-container) {
+    filter: blur(5px); /* Adjust the blur strength as needed */
+    transition: 0.5s filter ease; /* Add transition for smooth animation */
+}

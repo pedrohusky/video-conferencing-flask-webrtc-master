@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- icon -->
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+    <!-- socketio -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.4/socket.io.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- jQuery UI -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"
+        integrity="sha512-uto9mlQzrs59VwILcLiRYeLKPPbS/bT71da/OEBYEwcdNUk8jYIy+D176RYoop1Da+f9mvkYrmj5MCLZWEtQuA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- google Material icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- custom css -->
+    <link rel="stylesheet" href="{{url_for('static', filename='custom.css')}}">
+
+
+    <script type="text/javascript">
+        var myRoomID = "{{room_id}}";
+        var myName = "{{display_name}}";
+        var audioIsMuted = "{{mute_audio}}" == "1";
+        var videoIsMuted = "{{mute_video}}" == "1";
+        console.log(">> {{mute_audio}}, {{mute_video}}", audioIsMuted, videoIsMuted);
+    </script>
+
+    <style>
+        
+    </style>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Chat [{{room_id}}]</title>
+</head>
+
+<body>
+    <div class="placeholder-container scroll scroll-pull" id="people_box">
+        <p class="placeholder-text">Nenhum participante na sala
+            <i class="material-icons empty-icon">group</i>
+        </p>
+        <div id="people_users" class="people-users">
+            <!-- Content goes here -->
+        </div>
+    </div>
+
+
+    <div id="video_grid" class="video-grid">
+        
+
+    </div>
+
+    <!-- Chatbox -->
+<div id="chat_box" class="chat-box">
+    <!-- Chat content here -->
+    <div class="rounded-card chat-input-container ">
+        <input type="textarea" id="chat_input" class="chat-input" placeholder="Type a message...">
+        <button id="chat_send" class="chat-send-button">Send</button>
+    </div>
+</div>
+
+
+
+    <div class="bottom-buttons user-buttons-box">
+        <button id="mute_video_button"><i class="material-icons">videocam_off</i></button>
+        <button id="mute_audio_button"><i class="material-icons">mic_off</i></button>
+        <button id="raise_hand_button"><i class="material-icons">pan_tool</i></button>
+        <button id="share_screen_button"><i class="material-icons">screen_share</i></button>
+        <button id="toggle_people_button"><i class="material-icons">contacts</i></button>
+        <button id="toggle_chat_button"><i class="material-icons">chat</i></button>
+        <button id="end_call_button" style="background-color: red;"><i class="material-icons">phone_disabled</i></button>
+    </div>
+
+    
+    <video id="local_vid" style="border-radius: 10px;" autoplay muted></video>
+
+    <script src="{{url_for('static', filename='video-manager.js')}}"></script>
+    <script src="{{url_for('static', filename='chatroom_ui.js')}}"></script>
+    <script src="{{url_for('static', filename='chatroom_networking.js')}}"></script>
+
+
+</body>
+
+</html>
