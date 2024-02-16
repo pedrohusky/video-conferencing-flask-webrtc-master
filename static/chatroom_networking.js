@@ -38,9 +38,42 @@ function startCamera()
     });
 }
 
+// Step 1: Detect Connection Problems with the Server
+var serverConnectionStatus = true; // Initially assume server connection is established
+
+// Event listener for socket connection error
+socket.on("connect_error", (error) => {
+    console.log("Connection error:", error);
+    serverConnectionStatus = false; // Update server connection status
+    //show a toaster
+    toastr.error("Conexão perdida com o servidor. Tentando conectar de outras formas.\nERRO: " + error.message, "", {
+      closeButton: true,
+      progressBar: true,
+      positionClass: "toast-top-center",
+      timeOut: 5000, // Duration of the notification in milliseconds
+      extendedTimeOut: 1000, // Additional duration for the notification if hovered
+      preventDuplicates: true, // Prevent duplicate notifications
+      showDuration: 300, // Animation duration to show the notification
+      hideDuration: 1000, // Animation duration to hide the notification
+    });
+});
+
 socket.on("connect", ()=>{
     console.log("socket connected....");
     socket.emit("join-room", {"room_id": myRoomID});
+    toastr.success(
+      "Entrou na sala com sucesso.",
+      {
+        closeButton: true,
+        progressBar: true,
+        positionClass: "toast-top-center",
+        timeOut: 5000, // Duration of the notification in milliseconds
+        extendedTimeOut: 1000, // Additional duration for the notification if hovered
+        preventDuplicates: true, // Prevent duplicate notifications
+        showDuration: 300, // Animation duration to show the notification
+        hideDuration: 1000, // Animation duration to hide the notification
+      }
+    );
 });
 
 socket.on("user-connect", (data)=>{
@@ -71,6 +104,15 @@ socket.on("user-connect", (data)=>{
     adminClick,
     adminButtonsClick
   );
+
+  toastr.info("Participante: " + display_name + " entrou na sala.", {
+    closeButton: true,
+    timeOut: 5000, // Duration of the notification in milliseconds
+    extendedTimeOut: 1000, // Additional duration for the notification if hovered
+    preventDuplicates: true, // Prevent duplicate notifications
+    showDuration: 300, // Animation duration to show the notification
+    hideDuration: 1000, // Animation duration to hide the notification
+  });
 });
 
 socket.on("change", (data) => {
@@ -85,9 +127,18 @@ socket.on("change", (data) => {
 socket.on("user-disconnect", (data)=>{
     console.log("user-disconnect ", data);
     let peer_id = data["sid"];
+    let display_name = userList[peer_id]["nome"];
     closeConnection(peer_id);
     removeVideoElement(peer_id);
     checkVideoLayout();
+    toastr.warning("Participante: " + display_name + " saiu na sala.", {
+      closeButton: true,
+      timeOut: 5000, // Duration of the notification in milliseconds
+      extendedTimeOut: 1000, // Additional duration for the notification if hovered
+      preventDuplicates: true, // Prevent duplicate notifications
+      showDuration: 300, // Animation duration to show the notification
+      hideDuration: 1000, // Animation duration to hide the notification
+    });
 });
 
 socket.on("user-list", (data)=>{
@@ -175,16 +226,21 @@ socket.on("kick-user", (data) => {
   console.log("kick-user ", data);
   let element_id = data["sid"];
   let sender_id = data["sender_id"];
+  let type = data["type"];
   //var iAmAdmin = myData["admin"];
   //var isAdmin = userList[sender_id]["admin"];
   if (myID === element_id) {
-    for (let key in userList) {
-      closeConnection(key);
-      removeVideoElement(key);
-      checkVideoLayout();
+    switch (type) {
+        case "KICK":
+            alert("Você foi expulso da sala.");
+            window.location.href = "/?errorMessage=Você foi expulso da sala.";
+            break;
+        case "BAN":
+            alert("Você foi banido da sala.");
+            window.location.href = "/?errorMessage=Você foi banido da sala.";
+            break;
     }
-    socket.emit("kicked");
-    alert("Você foi removido da sala.");
+    return;
   }
 });
 
@@ -320,7 +376,7 @@ socket.on("chat-message", (data) => {
   console.log("chat-message ", data);
   let name = data["name"];
   let message = data["message"];
-  var chatBox = document.getElementById("chat_box");
+  var chatBox = document.getElementById("chat_messages");
   // Create a <p> element for the chat message
   let chatMessage = document.createElement("p");
   // Set the text content of the chat message

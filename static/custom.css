@@ -103,11 +103,12 @@ body {
 
 
 
-#chat_box {
+.chat-box {
     margin: 10px;
     top: 0;
     right:0;
     position: sticky;
+    display: flex;
     opacity: 0;
     width: 0px;
     height: 100%;
@@ -198,6 +199,8 @@ body {
     font-weight: bold;
     font-size: 24px;
     color: #999;
+    padding: 5px;
+    margin: 5px;
 }
 
 .people-users {
@@ -209,6 +212,12 @@ body {
     align-items: center; /* Center items vertically */
 }
 
+.chat-messages {
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+}
+
 /* Style for chat messages */
 .chat-message {
   background-color: rgba(255, 255, 255, 0.2); /* Lighter background color */
@@ -218,6 +227,7 @@ body {
   border-radius: 8px; /* Rounded corners */
   text-align: left; /* Center align text */
    word-wrap: break-word; /* Break long words and wrap text */
+   height: fit-content;
 }
 
 .person-card {
@@ -301,4 +311,64 @@ body {
 body.swal2-shown > *:not(.swal2-container) {
     filter: blur(5px); /* Adjust the blur strength as needed */
     transition: 0.5s filter ease; /* Add transition for smooth animation */
+}
+
+/* Adjustments for mobile responsiveness */
+@media only screen and (max-width: 768px) {
+  .video-grid {
+    width: 100%;
+    height: 87%;
+    margin-left: 5px;
+    margin-right: 5px;
+    right: auto;
+    top: auto;
+  }
+
+  #local_vid {
+    display: none; /* Hide local video on mobile */
+  }
+
+  .chat-box,
+  .placeholder-container {
+    width: 0%;
+    right: auto;
+    left: auto;
+    top: auto;
+    height: 86%; /* Adjust height to accommodate buttons and other elements */
+    margin: 5px; /* Reset margin */
+    margin-bottom: 70px; /* Remove margin bottom */
+    position: fixed;
+  overflow: hidden;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.5s ease, transform 0.5s ease, resize 0.5s ease;
+  z-index: 1;
+  }
+
+  .bottom-buttons {
+    width: 95%;
+    flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+    justify-content: center; /* Center buttons */
+  }
+
+  .bottom-buttons button {
+    margin: 5px; /* Adjust margin for buttons */
+  }
+
+.bottom-buttons {
+    display: flex;
+    align-items: center; /* Align items vertically */
+    justify-content: center; /* Center buttons horizontally */
+    position: fixed;
+    z-index: 1000; /* Ensure buttons appear above other content */
+}
+
+.bottom-buttons button {
+    margin: 5px; /* Adjust margin for buttons */
+    width: 35px;
+    height: 35px;
+}
+
 }

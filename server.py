@@ -5,6 +5,7 @@ from flask import Flask, jsonify, render_template, request, session
 from flask_socketio import SocketIO, emit, join_room
 import platform
 
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "wubba lubba dub dub"
 
@@ -41,12 +42,16 @@ def join():
         "nome": display_name,
         "mute_audio": mute_audio,
         "mute_video": mute_video,
-        "admin": '1' if len(users_in_room.get(room_id, [])) == 0
-                        or display_name in room_admins.get(room_id, []) else '0',
-        'ip': request.remote_addr
+        "admin": (
+            "1"
+            if len(users_in_room.get(room_id, [])) == 0
+            or display_name in room_admins.get(room_id, [])
+            else "0"
+        ),
+        "ip": request.remote_addr
     }
-    
-    print(f"Banned IPS: {banned_ips} - NEW IP: {request.remote_addr}")
+
+    print(f"IP's banidos: {banned_ips} - IP do novo participante: {request.remote_addr}")
 
     if request.remote_addr in banned_ips.get(room_id, []):
         error_message = "Você foi banido da sala: " + room_id;
@@ -79,6 +84,7 @@ def is_username_taken(room_id, username):
 
 @app.route("/", methods=["GET"])
 def home():
+    
     return render_template(
         "index.html",
     )
@@ -97,6 +103,8 @@ def on_join_room(data):
     display_name = session[room_id]["nome"]
     audio_muted = session[room_id]["mute_audio"]
     video_muted = session[room_id]["mute_video"]
+    client_ip = request.environ.get("REMOTE_ADDR")
+    client_port = request.environ.get("REMOTE_PORT")
 
     if names_sid.get(room_id) is None:
         names_sid[room_id] = {}
@@ -119,7 +127,8 @@ def on_join_room(data):
         "admin": "1" if room_admins[room_id] == display_name else "0",
         "audio_muted": audio_muted,
         "video_muted": video_muted,
-        'ip': request.remote_addr
+        "ip": client_ip,
+        "porta": client_port,
     }
 
     # broadcast to others in the room
@@ -133,8 +142,9 @@ def on_join_room(data):
             "nome": display_name,
             "audio_muted": audio_muted,
             "video_muted": video_muted,
-            "admin": '1' if room_admins[room_id] == display_name else '0',
-            'ip': request.remote_addr
+            "admin": "1" if room_admins[room_id] == display_name else "0",
+            "ip": client_ip,
+            "porta": client_port,
         },
         broadcast=True,
         include_self=False,
@@ -159,11 +169,11 @@ def on_join_room(data):
 def on_disconnect():
     sid = request.sid
     room_id = rooms_sid[sid]
-    display_name = names_sid[room_id].get(sid, {'nome': 'NULO'})["nome"]
+    display_name = names_sid[room_id].get(sid, {'nome': 'NULO_ERROR'})["nome"]
     posicao = names_sid[room_id].get(sid, {"posicao": -1})["posicao"]
 
-    if display_name == 'NULO':
-        return
+    # if display_name == 'NULO':
+    #     return
 
     print(f"[Sala {room_id}] Usuário saiu da sala: {display_name}<{sid}>")
     users_in_room[room_id].remove(sid)
@@ -193,9 +203,14 @@ def on_disconnect():
             print("Admin verificado com sucesso. Atualizando..")
             room_admins[room_id] = next_admin
             names_sid[room_id][userSid]["admin"] = '1'
+            emit(
+                "update-admin",
+                {"admin": "1", "sid": userSid},
+                broadcast=True,
+                include_self=False,
+                room=room_id,
+            )
             print(f"[Sala {room_id}] Novo administrador: {next_admin}")
-            emit("update-admin", {"admin": '1', "sid": userSid}, broadcast=True, include_self=False, room=room_id)
-            print('Admin atualizado com sucesso. Concluído.')
 
     if len(users_in_room[room_id]) == 0:
         users_in_room.pop(room_id)
@@ -206,26 +221,26 @@ def on_disconnect():
     print(f"\nUsuários restantes na sala: {users_in_room}\n")
 
 
-@socketio.on("kicked")
-def kicked():
-    sid = request.sid
-    room_id = rooms_sid[sid]
-    display_name = names_sid[room_id][sid]["nome"]
-    posicao = names_sid[room_id][sid]["posicao"]
+# @socketio.on("kicked")
+# def kicked():
+#     sid = request.sid
+#     room_id = rooms_sid[sid]
+#     display_name = names_sid[room_id][sid]["nome"]
+#     posicao = names_sid[room_id][sid]["posicao"]
 
-    print(f"[Sala {room_id}] Usuário saiu da sala: {display_name}<{sid}>")
-    users_in_room[room_id].remove(sid)
-    emit(
-        "user-disconnect",
-        {"sid": sid},
-        broadcast=True,
-        include_self=False,
-        room=room_id,
-    )
+#     print(f"[Sala {room_id}] Usuário saiu da sala: {display_name}<{sid}>")
+#     users_in_room[room_id].remove(sid)
+#     emit(
+#         "user-disconnect",
+#         {"sid": sid},
+#         broadcast=True,
+#         include_self=False,
+#         room=room_id,
+#     )
 
-    names_sid[room_id].pop(sid)
+#     names_sid[room_id].pop(sid)
 
-    print(f"\nUsuários restantes na sala: {users_in_room}\n")
+#     print(f"\nUsuários restantes na sala: {users_in_room}\n")
 
 
 @socketio.on("data")
@@ -236,16 +251,14 @@ def on_data(data):
         print("[Not supposed to happen!] request.sid and sender_id don't match!!!")
 
     if data["type"] != "new-ice-candidate":
-        print('{} message from {} to {}'.format(
-            data["type"], sender_sid, target_sid))
+        print(f"Mensagem tipo '{data['type']}' de {sender_sid} para {target_sid}")
+        
     socketio.emit('data', data, room=target_sid)
 
 
 @socketio.on("change")
 def handle_data(change):
-    sid = request.sid
-    room_id = change['room_id']
-    socketio.emit("change", change, room=room_id)
+    socketio.emit("change", change, room=change['room_id'])
 
 
 @socketio.on("chat-message")
@@ -269,9 +282,9 @@ def mute_user(data):
     if type == "KICK":
         emit(
             "kick-user",
-            {"sid": sid, "sender_id": sender_id},
+            {"sid": sid, "sender_id": sender_id, "type": type},
             broadcast=True,
-            include_self=True,
+            include_self=False,
             room=room_id,
         )
         print(f"\nUsuários restantes na sala: {users_in_room}\n")
@@ -279,18 +292,21 @@ def mute_user(data):
     elif type == "BAN":
         emit(
             "kick-user",
-            {"sid": sid, "sender_id": sender_id},
+            {"sid": sid, "sender_id": sender_id, "type": type},
             broadcast=True,
-            include_self=True,
+            include_self=False,
             room=room_id,
         )
-        ip = ames_sid[room_id][sid]["ip"]
+        ip = names_sid[room_id][sid]["ip"]
+        nome = names_sid[room_id][sid]["nome"]
+
         print(f"\nUsuários restantes na sala: {users_in_room}\n")
-        print(f"BANNING USER: {sid}")
-        print(f"IP: {ip}")
+
+        print("Iniciando banimento do usuário...")
+
         if ip not in banned_ips[room_id]:
             banned_ips[room_id].append(ip)
-        print(f"Banned IPS: {banned_ips}")
+            print(f"PARTICIPANTE: {nome} <{sid}> - ({ip}) - BANIDO")
     else:
         emit(
             "mute-user",

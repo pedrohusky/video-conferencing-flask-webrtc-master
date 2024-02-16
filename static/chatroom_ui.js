@@ -502,7 +502,7 @@ $("#end_call_button").click(function () {
   }).then((result) => {
     if (result.isConfirmed) {
       // Navigate to index.html
-      window.location.href = "/";
+      window.location.href = `/?errorMessage=Você saiu da sala ${myRoomID}.`;
     }
   })
 });
@@ -514,39 +514,76 @@ $("#toggle_chat_button").click(function () {
     // Toggle chat visibility
     var chatBox = $("#chat_box");
     var vid = $("#local_vid");
-    console.log(chatBox.width());
-    if (chatBox.width() === 0) {
-      document.getElementById("toggle_chat_button").style.backgroundColor =
-        "orange";
-      chatBox.animate(
-        {
-          width: "350px",
-          opacity: 1,
-        },
-        300
-      );
-      vid.animate(
-        {
-          width: "0px",
-        },
-        300
-      );
+    if ($(window).width() <= 768) {
+        if (chatBox.width() === 0) {
+          document.getElementById("toggle_chat_button").style.backgroundColor =
+            "orange";
+          chatBox.animate(
+            {
+              width: "95%",
+              opacity: 1,
+            },
+            300
+          );
+          vid.animate(
+            {
+              width: "0px",
+            },
+            300
+          );
+        } else {
+          document.getElementById("toggle_chat_button").style.backgroundColor =
+            null;
+          chatBox.animate(
+            {
+              width: "0%",
+              opacity: 0,
+            },
+            300
+          );
+          vid.animate(
+            {
+              width: "150px",
+            },
+            300
+          );
+        }
     } else {
-        document.getElementById("toggle_chat_button").style.backgroundColor = null;
-      chatBox.animate(
-        {
-          width: "0px",
-          opacity: 0,
-        },
-        300
-      );
-      vid.animate(
-        {
-          width: "150px",
-        },
-        300
-      );
+        if (chatBox.width() === 0) {
+          document.getElementById("toggle_chat_button").style.backgroundColor =
+            "orange";
+          chatBox.animate(
+            {
+              width: "30%",
+              opacity: 1,
+            },
+            300
+          );
+          vid.animate(
+            {
+              width: "0px",
+            },
+            300
+          );
+        } else {
+          document.getElementById("toggle_chat_button").style.backgroundColor =
+            null;
+          chatBox.animate(
+            {
+              width: "0%",
+              opacity: 0,
+            },
+            300
+          );
+          vid.animate(
+            {
+              width: "150px",
+            },
+            300
+          );
+        }
     }
+    
 });
 
 $("#toggle_people_button").click(function () {
@@ -554,49 +591,91 @@ $("#toggle_people_button").click(function () {
   var chatBox = $("#people_box");
   var vid = $("#local_vid");
   console.log(chatBox.width());
-  if (chatBox.width() === 0) {
-    var people_box = document.getElementById("people_box");
-    var people_users = document.getElementById("people_users");
-    people_box.children[0].innerHTML = `<p class="placeholder-text">Há: ${people_users.children.length} pessoas na sala</p>`;
 
-    if (people_users.children.length == 0) {
-      people_box.children[0].innerHTML = `
-        <p class="placeholder-text animvideo fade-in-zoom-in-delayed">Não há mais ninguém na sala</p>
-        <i class="material-icons empty-icon fade-in-zoom-in-delayed">group</i>
-    `;
-      console.log("Added default text and empty icon");
+  // Check if it's a mobile device (viewport width less than or equal to 768 pixels)
+  if ($(window).width() <= 768) {
+    if (chatBox.width() === 0) {
+      // Mobile mode animation
+      var people_box = document.getElementById("people_box");
+      var people_users = document.getElementById("people_users");
+      people_box.children[0].innerHTML = `<p class="placeholder-text">Há: ${people_users.children.length} pessoas na sala</p>`;
+
+      if (people_users.children.length == 0) {
+        people_box.children[0].innerHTML = `
+                    <p class="placeholder-text animvideo fade-in-zoom-in-delayed">Não há mais ninguém na sala</p>
+                    <i class="material-icons empty-icon fade-in-zoom-in-delayed">group</i>
+                `;
+        console.log("Added default text and empty icon");
+      }
+      document.getElementById("toggle_people_button").style.backgroundColor =
+        "purple";
+      chatBox.animate(
+        {
+          width: "95%",
+          opacity: 1,
+        },
+        300
+      );
+      vid.animate(
+        {
+          height: "0px",
+        },
+        300
+      );
+    } else {
+      document.getElementById("toggle_people_button").style.backgroundColor =
+        null;
+      chatBox.animate(
+        {
+          width: "0%",
+          opacity: 0,
+        },
+        300
+      );
+      vid.animate(
+        {
+          height: "240px",
+        },
+        300
+      );
     }
-    document.getElementById("toggle_people_button").style.backgroundColor =
-      "purple";
-    chatBox.animate(
-      {
-        width: "255px",
-        opacity: 1,
-      },
-      300
-    );
-    vid.animate(
-      {
-        height: "0px",
-      },
-      300
-    );
   } else {
-    document.getElementById("toggle_people_button").style.backgroundColor =
-      null;
-    chatBox.animate(
-      {
-        width: "0px",
-        opacity: 0,
-      },
-      300
-    );
-    vid.animate(
-      {
-        height: "240px",
-      },
-      300
-    );
+    // Desktop mode animation
+    if (chatBox.width() === 0) {
+      document.getElementById("toggle_people_button").style.backgroundColor =
+        "purple";
+      chatBox.animate(
+        {
+          width: "20%", // Adjusted width for desktop mode
+          opacity: 1,
+        },
+        300
+      );
+      vid.animate(
+        {
+          height: "0px",
+        },
+        300
+      );
+    } else {
+      document.getElementById("toggle_people_button").style.backgroundColor =
+        null;
+      chatBox.animate(
+        {
+          width: "0%",
+          opacity: 0,
+        },
+        300
+      );
+      vid.animate(
+        {
+          height: "240px",
+        },
+        300
+      );
+    }
   }
 });
+
+
 
